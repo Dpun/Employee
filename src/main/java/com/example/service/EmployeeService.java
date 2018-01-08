@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.example.api.result.Result;
+import com.example.commandObject.EmployeeCO;
 import com.example.constant.StatusType;
 import com.example.model.Employee;
 import com.example.repository.EmployeeRepository;
@@ -15,8 +16,13 @@ public class EmployeeService {
 	@Autowired
 	private EmployeeRepository employeeRepository;
 	
-	public Result createEmployee(Employee employee){
-		Employee saveEmployee = employeeRepository.save(employee);
+	public Result createEmployee(EmployeeCO employee){
+		Employee emp = new Employee();
+		emp.setEmployeeName(employee.getEmplName());
+		emp.setEmployeeSalary(employee.getEmplSalary());
+		emp.setEmployeeDesignation(employee.getEmplDesignation());
+		
+		Employee saveEmployee = employeeRepository.save(emp);
 		Result result = new Result();
 		if(saveEmployee != null){
 			result.setStatus(StatusType.SUCCESS);

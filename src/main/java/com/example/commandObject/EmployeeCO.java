@@ -1,17 +1,17 @@
 package com.example.commandObject;
 
-import javax.validation.constraints.Max;
-import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 
-public class EmployeeCO {
+import com.example.validator.constraint.NameConstraint;
+import com.example.validator.constraint.SalaryConstraint;
+
+public class EmployeeCO  {
 	private Integer emplId;
-	@NotNull(message="Employee name cannot be empty.")
+	@NotNull
+	@NameConstraint(message="Employee name length must not be less than 5.")
 	private String emplName;
-	@NotNull(message="Employee designation cannot be empty.")
 	private String emplDesignation;
-	@Min(value=15000,message="Employee Salary cannot be less than 15000.")
-	@Max(value=50000,message="Employee Salary cannot be more than 15000.")
+	@SalaryConstraint(message="Salary must be between 5000 and 50000.")
 	private Integer emplSalary;
 	
 	public Integer getEmplId() {

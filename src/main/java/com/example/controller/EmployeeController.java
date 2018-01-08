@@ -1,7 +1,10 @@
 package com.example.controller;
 
+import javax.validation.Valid;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -10,6 +13,8 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.api.result.Result;
+import com.example.commandObject.EmployeeCO;
+import com.example.exception.ResponseErrorException;
 import com.example.model.Employee;
 import com.example.service.EmployeeService;
 
@@ -27,7 +32,10 @@ public class EmployeeController {
 	
 	@RequestMapping(value="/create",method=RequestMethod.POST,produces = MediaType.APPLICATION_JSON_VALUE ,consumes=MediaType.APPLICATION_JSON_VALUE)
 	@ResponseBody
-	public Result createEmployee(@RequestBody Employee employee){
+	public Result createEmployee(@Valid @RequestBody EmployeeCO employee,BindingResult bindingResult){
+		if(bindingResult.hasErrors()){
+			throw new ResponseErrorException(bindingResult);
+		}
 		return employeeService.createEmployee(employee);
 	}
 	
