@@ -20,4 +20,9 @@ public class DepartmentController {
     public Result createDepartment(@RequestBody DepartmentCO departmentCO){
         return departmentServices.createDepartment(departmentCO);
     }
+
+    @RequestMapping(value = "/findAll",method= RequestMethod.GET,produces = MediaType.APPLICATION_JSON_VALUE )
+    public Result findAllDepartment(){
+        return departmentServices.findAllDepartment();
+    }
 }

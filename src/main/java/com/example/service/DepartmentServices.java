@@ -46,4 +46,19 @@ public class DepartmentServices  {
 
         return result;
     }
+
+    public Result findAllDepartment(){
+        Result result = new Result();
+        Iterable<Department> departments = departmentRepository.findAll();
+        if(departments != null){
+            result.setStatus(StatusType.SUCCESS);
+            result.setMessage("Department List");
+            result.setData(departments);
+        }else{
+            result.setStatus(StatusType.FAIL);
+            result.setMessage("Department List is empty.");
+        }
+
+        return result;
+    }
 }

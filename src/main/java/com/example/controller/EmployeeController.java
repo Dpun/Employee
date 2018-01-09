@@ -72,4 +72,16 @@ public class EmployeeController {
 	public Result getEmployeeDetailsByName(@RequestParam String employeeName){
 		return employeeService.getEmployeeDetailsByName(employeeName);
 	}
+
+	@RequestMapping(value = "/departmentwise",method = RequestMethod.GET,produces = MediaType.APPLICATION_JSON_VALUE)
+	@ResponseBody
+	public Result countEmployeeByDepartmentwise(){
+		return employeeService.findNumberOfEmployeeDepartmentWise();
+	}
+
+	@RequestMapping(value = "/listBySalary",method = RequestMethod.GET,produces = MediaType.APPLICATION_JSON_VALUE)
+	@ResponseBody
+	public Result findEmployeeBySalary(@RequestParam Integer amount){
+		return employeeService.findEmployeeBySalaryMoreThan(amount);
+	}
 }

@@ -21,8 +21,11 @@ public class ErrorResponse {
 		this.setStatus(StatusType.FAIL);
 		errorList = new ArrayList<>();
 		if(bindingResult.hasErrors()){
-			bindingResult.getFieldErrors().forEach((k)->{
+			/*bindingResult.getFieldErrors().forEach((k)->{
 				errorList.add(k.getDefaultMessage());
+			});*/
+			bindingResult.getAllErrors().forEach((k)->{
+					errorList.add(k.getDefaultMessage());
 			});
 		}
 	}

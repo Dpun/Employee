@@ -1,7 +1,10 @@
 package com.example.service;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
 import com.example.model.Department;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -181,6 +184,40 @@ public class EmployeeService {
 			result.setMessage("Employee details not found by this name : "+employeeName);
 		}
 
+		return result;
+	}
+
+	public Result findNumberOfEmployeeDepartmentWise(){
+		Result result = new Result();
+		Iterable<Employee> employees = employeeRepository.findAll();
+		if(employees != null){
+			Map<String,Long> list = StreamSupport.stream(employees.spliterator(),false).collect(Collectors.groupingBy(e->e.getDepartment().getDeptName(),Collectors.counting()));
+			if(!list.isEmpty()){
+				result.setStatus(StatusType.SUCCESS);
+				result.setData(list);
+				result.setMessage("Result reterived successfully.");
+			}
+		}else{
+			result.setStatus(StatusType.FAIL);
+			result.setMessage("Unable to fetch Record.");
+		}
+		return result;
+	}
+
+	public Result findEmployeeBySalaryMoreThan(Integer amount){
+		Result result = new Result();
+		Iterable<Employee> employees = employeeRepository.findAll();
+		if(employees != null){
+			List<Employee> employeesBySalary = StreamSupport.stream(employees.spliterator(),false).filter(e-> e.getEmployeeSalary()> amount).collect(Collectors.toList());
+			if(!employeesBySalary.isEmpty()){
+				result.setStatus(StatusType.SUCCESS);
+				result.setData(employeesBySalary);
+				result.setMessage("Record retrived Successfully.");
+			}else {
+				result.setStatus(StatusType.FAIL);
+				result.setMessage("Unable to fetch Record.");
+			}
+		}
 		return result;
 	}
 }
