@@ -2,12 +2,7 @@ package com.example.model;
 
 import java.io.Serializable;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
 
 @Entity
 @Table(name = "employee" )
@@ -22,6 +17,9 @@ public class Employee implements Serializable{
 	private Integer employeeSalary;
 	@Column(name="employee_designation")
 	private String employeeDesignation;
+
+	@ManyToOne
+	private Department department;
 	
 	public Integer getEmployeeId() {
 		return employeeId;
@@ -46,5 +44,13 @@ public class Employee implements Serializable{
 	}
 	public void setEmployeeDesignation(String employeeDesignation) {
 		this.employeeDesignation = employeeDesignation;
+	}
+
+	public Department getDepartment() {
+		return department;
+	}
+
+	public void setDepartment(Department department) {
+		this.department = department;
 	}
 }

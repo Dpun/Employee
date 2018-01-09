@@ -1,7 +1,9 @@
 package com.example.service;
 
+import java.util.List;
 import java.util.Optional;
 
+import com.example.model.Department;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -15,25 +17,37 @@ import com.example.repository.EmployeeRepository;
 public class EmployeeService {
 	@Autowired
 	private EmployeeRepository employeeRepository;
+	@Autowired
+	private DepartmentServices departmentServices;
 	
 	public Result createEmployee(EmployeeCO employee){
+		Result result2 = new Result();
 		Employee emp = new Employee();
 		emp.setEmployeeName(employee.getEmplName());
 		emp.setEmployeeSalary(employee.getEmplSalary());
 		emp.setEmployeeDesignation(employee.getEmplDesignation());
-		
-		Employee saveEmployee = employeeRepository.save(emp);
-		Result result = new Result();
-		if(saveEmployee != null){
-			result.setStatus(StatusType.SUCCESS);
-			result.setMessage("Employee created Successfully.");
-			result.setData(saveEmployee);
-		}else{
-			result.setStatus(StatusType.FAIL);
-			result.setMessage("Fail to create Employee.");
+
+		if(employee.getDeptId() != null && employee.getDeptId() > 0){
+			Result result = departmentServices.findDepartmentById(employee.getDeptId());
+			if(result.getStatus().equals(StatusType.SUCCESS)){
+				emp.setDepartment((Department) result.getData());
+				Employee saveEmployee = employeeRepository.save(emp);
+
+				if(saveEmployee != null){
+					result2.setStatus(StatusType.SUCCESS);
+					result2.setMessage("Employee created Successfully.");
+					result2.setData(saveEmployee);
+				}else{
+					result2.setStatus(StatusType.FAIL);
+					result2.setMessage("Fail to create Employee.");
+				}
+			}else{
+				result2.setStatus(StatusType.FAIL);
+				result2.setMessage("Department is not found to map with Employee.");
+			}
 		}
-		
-		return result;
+
+		return result2;
 	}
 	
 	public Result getAllEmployeeList(){
@@ -145,6 +159,28 @@ public class EmployeeService {
 			result.setMessage("Fail to update Employee details.id : "+employeeId);
 		}
 		
+		return result;
+	}
+
+	public Result getEmployeeDetailsByName(String employeeName){
+		Result result = new Result();
+		if(employeeName == null && employeeName.length() == 0 && employeeName.equals("") ){
+			result = new Result();
+			result.setStatus(StatusType.FAIL);
+			result.setMessage("Employee Name cannot be empty.");
+
+			return result;
+		}
+		List<Employee> employee = employeeRepository.findEmployeeDetailsByName("%"+employeeName+"%");
+		if(!employee.isEmpty()){
+			result.setStatus(StatusType.SUCCESS);
+			result.setMessage("Employee details fetched successfully.");
+			result.setData(employee);
+		}else{
+			result.setStatus(StatusType.FAIL);
+			result.setMessage("Employee details not found by this name : "+employeeName);
+		}
+
 		return result;
 	}
 }

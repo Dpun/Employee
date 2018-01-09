@@ -2,6 +2,7 @@ package com.example.commandObject;
 
 import javax.validation.constraints.NotNull;
 
+import com.example.validator.constraint.DepartmentConstraint;
 import com.example.validator.constraint.NameConstraint;
 import com.example.validator.constraint.SalaryConstraint;
 
@@ -13,7 +14,9 @@ public class EmployeeCO  {
 	private String emplDesignation;
 	@SalaryConstraint(message="Salary must be between 5000 and 50000.")
 	private Integer emplSalary;
-	
+	@DepartmentConstraint
+	private Integer deptId;
+
 	public Integer getEmplId() {
 		return emplId;
 	}
@@ -37,5 +40,13 @@ public class EmployeeCO  {
 	}
 	public void setEmplSalary(Integer emplSalary) {
 		this.emplSalary = emplSalary;
+	}
+
+	public Integer getDeptId() {
+		return deptId;
+	}
+
+	public void setDeptId(Integer deptId) {
+		this.deptId = deptId;
 	}
 }
