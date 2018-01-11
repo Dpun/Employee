@@ -1,8 +1,6 @@
 package com.example.service;
 
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
@@ -153,7 +151,7 @@ public class EmployeeService {
 	public Result deleteEmployee(Integer employeeId){
 		Result result = new Result();
 		Optional<Employee> employee = employeeRepository.findById(employeeId);
-		if(employee != null){
+		if(employee.isPresent()){
 			employeeRepository.delete(employee.get());
 			result.setStatus(StatusType.SUCCESS);
 			result.setMessage("Employee details deleted Successfully.id : "+employeeId);
@@ -208,7 +206,7 @@ public class EmployeeService {
 		Result result = new Result();
 		Iterable<Employee> employees = employeeRepository.findAll();
 		if(employees != null){
-			List<Employee> employeesBySalary = StreamSupport.stream(employees.spliterator(),false).filter(e-> e.getEmployeeSalary()> amount).collect(Collectors.toList());
+			List<Employee> employeesBySalary = StreamSupport.stream(employees.spliterator(),false).filter(e-> e.getEmployeeSalary()> amount).sorted((a,b)->a.getEmployeeId().compareTo(b.getEmployeeId())).collect(Collectors.toList());
 			if(!employeesBySalary.isEmpty()){
 				result.setStatus(StatusType.SUCCESS);
 				result.setData(employeesBySalary);
@@ -217,6 +215,90 @@ public class EmployeeService {
 				result.setStatus(StatusType.FAIL);
 				result.setMessage("Unable to fetch Record.");
 			}
+		}
+		return result;
+	}
+
+	public Result findTotalCostToEmployee(){
+		Result result = new Result();
+		Iterable<Employee> employees = employeeRepository.findAll();
+		if(employees != null){
+			//Integer totalCost = StreamSupport.stream(employees.spliterator(),false).collect(Collectors.summingInt(emp->emp.getEmployeeSalary()));
+			Integer totalCost = StreamSupport.stream(employees.spliterator(),false).map(emp->emp.getEmployeeSalary()).reduce(0,Integer::sum);
+			result.setStatus(StatusType.SUCCESS);
+			result.setData(totalCost);
+			result.setMessage("Record retrived Successfully.");
+		}else {
+			result.setStatus(StatusType.FAIL);
+			result.setMessage("Unable to fetch Record.");
+		}
+
+		return result;
+	}
+
+	public Result findTotalCostToEmployeeDepartmentwise(){
+		Result result = new Result();
+		Iterable<Employee> employees = employeeRepository.findAll();
+		if(employees != null){
+			//StreamSupport.stream(employees.spliterator(),false).collect(Collectors.groupingBy(employee->employee.getDepartment().getDeptId(),Collectors.summingInt(employee->employee.getEmployeeSalary())));
+			result.setStatus(StatusType.SUCCESS);
+			result.setData(StreamSupport.stream(employees.spliterator(),false).collect(Collectors.groupingBy(employee->employee.getDepartment().getDeptName(),Collectors.summingInt(employee->employee.getEmployeeSalary()))));
+			result.setMessage("Record retrived Successfully.");
+		}else {
+			result.setStatus(StatusType.FAIL);
+			result.setMessage("Unable to fetch Record.");
+		}
+		return result;
+	}
+
+	public Result findEmployeeWithMinMaxSalary(){
+		Result result = new Result();
+		Iterable<Employee> employees = employeeRepository.findAll();
+		if(employees != null){
+			Map<String,Employee> list = new HashMap<>();
+			Employee employee =	StreamSupport.stream(employees.spliterator(),false).max((emp1,emp2)->emp1.getEmployeeSalary()>emp2.getEmployeeSalary()?1:-1).get();
+			list.put("Max Salary",employee);
+
+			Employee employee2 =	StreamSupport.stream(employees.spliterator(),false).min((emp1,emp2)->emp1.getEmployeeSalary()>emp2.getEmployeeSalary()?1:-1).get();
+			list.put("Min Salary",employee2);
+
+			result.setStatus(StatusType.SUCCESS);
+			result.setData(list);
+			result.setMessage("Record retrived Successfully.");
+		}else {
+			result.setStatus(StatusType.FAIL);
+			result.setMessage("Unable to fetch Record.");
+		}
+		return result;
+	}
+
+	public Result findEmployeeByDeptID(Integer deptID){
+		Result result = new Result();
+		if (deptID > 0){
+			Result result1 = departmentServices.findDepartmentById(deptID);
+			if(result1.getStatus().equals(StatusType.SUCCESS)){
+				List<Employee> employeeList = employeeRepository.findEmployeeDeptWise((Department)result1.getData());
+				result.setStatus(StatusType.SUCCESS);
+				result.setData(employeeList);
+				result.setMessage("Record retrived Successfully.");
+			}
+		}else{
+			result.setStatus(StatusType.FAIL);
+			result.setMessage("Unable to fetch Record.");
+		}
+		return result;
+	}
+
+	public Result findEmployeeByDeptLocation(String location){
+		Result result = new Result();
+		if(location != null && location.length()>0){
+			List<Employee> list = employeeRepository.findEmployeeByDeptCity(location);
+			result.setStatus(StatusType.SUCCESS);
+			result.setData(list);
+			result.setMessage("Record retrived Successfully.");
+		}else{
+			result.setStatus(StatusType.FAIL);
+			result.setMessage("Unable to fetch Record.");
 		}
 		return result;
 	}

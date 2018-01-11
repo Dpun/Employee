@@ -84,4 +84,34 @@ public class EmployeeController {
 	public Result findEmployeeBySalary(@RequestParam Integer amount){
 		return employeeService.findEmployeeBySalaryMoreThan(amount);
 	}
+
+	@RequestMapping(value = "/costToCompany",method = RequestMethod.GET,produces = MediaType.APPLICATION_JSON_VALUE)
+	@ResponseBody
+	public Result findTotalCostToEmployee(){
+		return employeeService.findTotalCostToEmployee();
+	}
+
+	@RequestMapping(value = "/costDeptWise",method = RequestMethod.GET,produces = MediaType.APPLICATION_JSON_VALUE)
+	@ResponseBody
+	public Result totalCostByDeptWise(){
+		return employeeService.findTotalCostToEmployeeDepartmentwise();
+	}
+
+	@RequestMapping(value = "/minMaxSalary",method = RequestMethod.GET,produces = MediaType.APPLICATION_JSON_VALUE)
+	@ResponseBody
+	public Result findMinMaxSalary(){
+		return employeeService.findEmployeeWithMinMaxSalary();
+	}
+
+	@RequestMapping(value = "/find/deptWise",method = RequestMethod.GET,produces = MediaType.APPLICATION_JSON_VALUE)
+	@ResponseBody
+	public Result findEmployeeByDeptWise(@RequestParam Integer deptID){
+		return employeeService.findEmployeeByDeptID(deptID);
+	}
+
+	@RequestMapping(value = "/find/ByLocation",method = RequestMethod.GET,produces = MediaType.APPLICATION_JSON_VALUE)
+	@ResponseBody
+	public Result findEmployeeByDeptLocation(@RequestParam String location){
+		return employeeService.findEmployeeByDeptLocation(location);
+	}
 }
